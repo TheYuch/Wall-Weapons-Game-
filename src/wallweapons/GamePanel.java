@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
-import wallweapons.Weapons.Shield;
+import wallweapons.Weapons.*;
 
 public class GamePanel extends JPanel {
 	/*
@@ -21,62 +21,84 @@ public class GamePanel extends JPanel {
 		 */
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
-
-		GameState currState = Main.state;
 		
 		/*
 		 * Draw the grid
 		 */
+		/*
 		g.setColor(Color.LIGHT_GRAY);
-		final int constantx = Main.WIN_WIDTH / currState.GRIDS_X;
-		for (int i = 1; i < currState.GRIDS_X; i++)
+		for (int i = 1; i < GameState.GRIDS_X; i++)
 		{
-			g.fillRect((i * constantx) - (currState.GRID_THICKNESS / 2), 0, currState.GRID_THICKNESS, Main.WIN_HEIGHT); 
+			g.fillRect((i * constantx) - (GameState.GRID_THICKNESS / 2), 0, GameState.GRID_THICKNESS, Main.WIN_HEIGHT); 
 			//rectangles act as thicker lines
 		}
-		final int constanty = Main.WIN_HEIGHT / currState.GRIDS_Y;
-		for (int i = 1; i < currState.GRIDS_Y; i ++)
+		for (int i = 1; i < GameState.GRIDS_Y; i ++)
 		{
-			g.fillRect(0, (i * constanty) - (currState.GRID_THICKNESS / 2), Main.WIN_WIDTH, currState.GRID_THICKNESS);
-		}
+			g.fillRect(0, (i * constanty) - (GameState.GRID_THICKNESS / 2), Main.WIN_WIDTH, GameState.GRID_THICKNESS);
+		}*/
 		
 		/*
-		 * draw obstacles
+		 * draw walls
 		 */
-		for (int i = 0; i < currState.GRIDS_Y; i ++)
+		for (int i = 0; i < GameState.GRIDS_Y; i ++)
 		{
-			for (int j = 0; j < currState.GRIDS_X; j ++)
+			for (int j = 0; j < GameState.GRIDS_X; j ++)
 			{
-				if (currState.walls[i][j] > 0)
+				if (GameState.walls[i][j] > 0)
 				{
-					g.setColor(Color.GRAY);
-					g.fillRect(j * constantx, i * constanty, constantx, constanty);
+					g.setColor(Color.LIGHT_GRAY);
+					if (GameState.walls[i][j] >= 25)
+						g.setColor(Color.GRAY);
+					g.fillRect(j * GameState.constantx, i * GameState.constanty, GameState.constantx, GameState.constanty);
 				}
-				else if (currState.walls[i][j] == -1)
+				else if (GameState.walls[i][j] == -1)
 				{ //draw core
 					g.setColor(Color.BLACK);
-					g.fillRect(j * constantx, i * constanty, constantx, constanty);
+					g.fillRect(j * GameState.constantx, i * GameState.constanty, GameState.constantx, GameState.constanty);
 				}
 			}
+		}
+		
+		//draw enemies
+		for (int i = 0; i < GameState.enemies.size(); i ++)
+		{
+			Enemy curenemy = GameState.enemies.get(i);
+			g.setColor(curenemy.drawcolor);
+			g.fillOval((int)(curenemy.pos.x), (int)(curenemy.pos.y), curenemy.ENEMY_SIZE, curenemy.ENEMY_SIZE);
 		}
 		
 		/*
 		 * Draw the player
 		 */
-		g.setColor(Color.BLUE);
-		Point2D.Double player = currState.player;
-		g.fillRect((int)player.x + currState.tmp, (int)player.y, GameState.PLAYER_SIZE, GameState.PLAYER_SIZE);
+		g.setColor(Player.drawcolor);
+		Point2D.Double player = Main.state.player.pos;
+		g.fillRect((int)player.x, (int)player.y, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
 		//g.fillOval((int)player.x, (int)player.y, GameState.PLAYER_SIZE, GameState.PLAYER_SIZE);
 		
-		//draw shields
-		for (int i = 0; i < currState.shields.size(); i ++)
+		//draw weapons
+		for (int i = 0; i < GameState.weapons.size(); i ++)
 		{
-			if (currState.shields.get(i).colliderenabled) 
-				g.setColor(Shield.drawcolor);
-			else
-				g.setColor(Shield.disabledcolor);
-			Rectangle r = currState.shields.get(i).collider;
-			g.drawRect(r.x, r.y, r.width, r.height);
+			Weapon curweapon = GameState.weapons.get(i);
+			if (curweapon instanceof Shield)
+			{
+				Shield cur = (Shield)curweapon;
+				if (cur.colliderenabled) 
+					g.setColor(cur.drawcolor);
+				else
+					g.setColor(Shield.disabledcolor);
+				Rectangle r = cur.collider;
+				g.drawRect(r.x, r.y, r.width, r.height);
+			}
+			else if (curweapon instanceof Laser)
+			{
+				Laser cur = (Laser)curweapon;
+				if (cur.laserenabled)
+				{
+					g.setColor(cur.drawcolor);
+					g.fillRect(cur.laser1.x, cur.laser1.y, cur.laser1.width, cur.laser1.height);
+					g.fillRect(cur.laser2.x, cur.laser2.y, cur.laser2.width, cur.laser2.height);
+				}
+			}
 		}
 	}
 }

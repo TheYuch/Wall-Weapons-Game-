@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 public class Main {
 
 	static GameState state = new GameState();
-	static final int WIN_WIDTH = 1000; //must be multiple of 100 for grids to work
-	static final int WIN_HEIGHT = 600;
+	public static final int WIN_WIDTH = 1000; //must be multiple of 100 for grids to work
+	public static final int WIN_HEIGHT = 600;
 
 	public static void main(String args[]) throws InterruptedException {
 		JFrame frame = new JFrame("Wall Weapons");
@@ -39,18 +39,19 @@ public class Main {
 	
 	public static int[][] rotateArray(int[][] arr, int degrees)
 	{
-		int width = arr.length;
-		int height = arr[0].length;
+		if (degrees == 0)
+			return arr;
+		
+		int width = arr[0].length;
+		int height = arr.length;
 		
 		int[][] ret;
 		if (degrees == 180)
-			ret = new int[width][height];
-		else
 			ret = new int[height][width];
+		else
+			ret = new int[width][height];
 		
-		if (degrees == 0)
-			return arr;
-		else if (degrees == 90)
+		if (degrees == 90)
 		{
 			for (int i = 0; i < width; i ++) //i here is the x value
 			{
@@ -77,5 +78,11 @@ public class Main {
 		}
 		
 		return ret;
+	}
+	
+	public static void gameover() throws InterruptedException
+	{
+		Thread.sleep(1000);
+		System.exit(0);
 	}
 }

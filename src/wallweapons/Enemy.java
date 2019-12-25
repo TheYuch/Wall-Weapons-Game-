@@ -1,8 +1,8 @@
 package wallweapons;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 public abstract class Enemy { //enemy will go to whichever is nearest - player or center
 	
@@ -12,15 +12,20 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 	protected Point2D.Double prevpos; //used to calculate collision
 	protected Point2D.Double velocity; //calculated using trigonometry depending on speed variable
 	public int damagetowalls;
-	public int damagetoplayer; //maybe change to protected later, add function - damageplayer()20938409384
+	public int damagetoplayer; //MAYBE GET RID OF THIS - SEE PLAYER LINE 40.. 21342341432
 	public int ENEMY_SIZE; //MUST BE SMALLER THAN THE SIZE OF A SINGLE WALL
-	public int tmp; //used to make drawing smooth
 	
-	protected Enemy(Point2D.Double pos)
+	public Color drawcolor;
+	
+	protected Enemy(Point2D.Double pos, Color color)
 	{
-		this.pos = pos;
-		this.prevpos = pos;
-		this.tmp = 0;
+		this.pos = new Point2D.Double();
+		this.prevpos = new Point2D.Double();
+		this.velocity = new Point2D.Double();
+		this.pos = pos; //NOTE THAT POS top-left corner of the enemy.
+		this.prevpos.x = pos.x;
+		this.prevpos.y = pos.y;
+		this.drawcolor = color;
 	}
 	
 	protected boolean detectCollision(Rectangle r) //called in move abstract method
@@ -31,43 +36,47 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 			{
 				pos.y = r.y - ENEMY_SIZE;
 				velocity.y = 0;
+				return true;
+			}
+			else if (prevpos.x <= r.x - ENEMY_SIZE) //left-side collision
+			{
+				pos.x = r.x - ENEMY_SIZE;
+				velocity.x = 0;
+				return true;
+			}
+			else if (prevpos.x >= r.x + r.width) //right-side collision
+			{
+				pos.x = r.x + r.width;
+				velocity.x = 0;
+				return true;
 			}
 			else if (prevpos.y >= r.y + r.height) //ceiling collision
 			{
 				pos.y = r.y + r.height;
 				velocity.y = 0;
+				return true;
 			}
-			else if (prevpos.x <= r.x - ENEMY_SIZE) //left-side collision
-			{
-				tmp = 1;
-				pos.x = r.x - ENEMY_SIZE - 1;
-				velocity.x = 0;
-			}
-			else if (prevpos.x >= r.x + r.width) //right-side collision
-			{
-				tmp = -1;
-				pos.x = r.x + r.width + 1;
-				velocity.x = 0;
-			}
-			return true;
+			//return true; //UNCOMMENT THIS IF YOU WANT ENEMY TO DOUBLE SPEED INSIDE SHIELD BOUNDARY
+			//2O348093840938409384039284
 		}
 		return false;
 	}
 	
-	abstract protected void move(int[][] walls); //use walls to detect collision
+	abstract protected void move(int[][] walls, Point2D.Double player, int corex, int corey);//use walls to detect collision
 	
 	protected void setvelocity(Point2D.Double player, int corex, int corey) //corepos relative to screen
 	{
 		//trigonometry based on speed and player/core position
 		double targetx;
 		double targety;
+		Point2D.Double tmppos = new Point2D.Double(pos.x + ENEMY_SIZE / 2, pos.y + ENEMY_SIZE / 2);
 		//calculate distance to player/core (based on their centers) - note square roots cancel so aren't necessary
-		double distancetoplayer = (pos.x - player.x)*(pos.x - player.x) + (pos.y - player.y)*(pos.y - player.y);
-		double distancetocore = (pos.x - corex)*(pos.x - corex) + (pos.y - corey)*(pos.y - corey);
-		if (distancetoplayer >= distancetocore)
+		double distancetoplayer = (tmppos.x - player.x)*(tmppos.x - player.x) + (tmppos.y - player.y)*(tmppos.y - player.y);
+		double distancetocore = (tmppos.x - (corex * GameState.constantx))*(tmppos.x - (corex * GameState.constantx)) + (tmppos.y - (corey * GameState.constanty))*(tmppos.y - (corey * GameState.constanty));
+		if (distancetoplayer <= distancetocore)
 		{
-			targetx = player.x + (GameState.PLAYER_SIZE / 2);
-			targety = player.y + (GameState.PLAYER_SIZE / 2);
+			targetx = player.x + (Player.PLAYER_SIZE / 2);
+			targety = player.y + (Player.PLAYER_SIZE / 2);
 		}
 		else
 		{
@@ -76,7 +85,7 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		}
 		//set velocity
 		//find angle of pos relative to target
-		double angle = Math.atan2((targetx - pos.x), (targety - pos.y));
+		double angle = Math.atan2((targetx - tmppos.x), (targety - tmppos.y));
 		if (Math.toDegrees(angle) == 90)
 		{
 			velocity.x = speed;
@@ -91,7 +100,10 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		velocity.y = Math.cos(angle) * speed;
 	}
 	
-	abstract public void update(int[][] walls, Point2D.Double player, int corex, int corey); //called by GameState
+	abstract public boolean update(int[][] walls, Point2D.Double player, int corex, int corey); //called by GameState
+	//NOTE THAT THIS RETURNS WHETHER THE ENEMY HAS DIED OR NOT.
+	
+	//ADD TICKS LATER FOR SHOOTING ENEMY.019384098028390482034893184014
 	/*
 	 * Call in update method:
 	 * move()
