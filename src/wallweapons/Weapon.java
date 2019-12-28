@@ -9,7 +9,7 @@ public abstract class Weapon {
 	public Color drawcolor;
 	public Point pos;
 	protected int delay;
-	protected float nexttime;
+	protected int nexttime;
 	
 	public Weapon(int[][] shape, Color drawcolor, Point pos, int delay) {
 		this.shape = shape;

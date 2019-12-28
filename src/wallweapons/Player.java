@@ -12,6 +12,7 @@ public class Player {
 	static final int DAMAGE_TO_ENEMIES = 15;
 	
 	public static Color drawcolor = Color.BLUE;
+	public static Color lowhealthcolor = new Color(80, 170, 225);
 	
 	public int health = 100;
 	

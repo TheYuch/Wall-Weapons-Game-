@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import wallweapons.Enemy;
 import wallweapons.GameState;
 import wallweapons.Main;
 import wallweapons.Weapon;
@@ -107,6 +106,8 @@ public class Laser extends Weapon {
 			laserenabled = true;
 			
 			ontime = ticks + (30 / 4); //0.25 seconds
+			damageWalls();
+			damageEnemies();
 			super.nexttime = -1;
 		}
 		else if (ontime != -1 && ticks >= ontime)

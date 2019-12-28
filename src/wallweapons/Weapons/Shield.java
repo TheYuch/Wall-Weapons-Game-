@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import wallweapons.Enemy;
 import wallweapons.GameState;
 import wallweapons.Weapon;
 

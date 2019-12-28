@@ -1,6 +1,7 @@
 package wallweapons;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 
 import javax.swing.JFrame;
 
@@ -34,6 +35,23 @@ public class Main {
 			long elapsedTime = System.currentTimeMillis() - startTime;
 
 			Thread.sleep(Math.max(0, 1000 / 30 - elapsedTime));
+		}
+	}
+	
+	public static Point2D.Double getVelocity(int speed, double pos1x, double pos1y, double pos2x, double pos2y)
+	{
+		double angle = Math.atan2((pos1x - pos2x), (pos1y - pos2y));
+		if (Math.toDegrees(angle) == 90)
+		{
+			return new Point2D.Double(speed, 0);
+		}
+		else if (Math.toDegrees(angle) == -90)
+		{
+			return new Point2D.Double(-speed, 0);
+		}
+		else
+		{
+			return new Point2D.Double(Math.sin(angle) * speed, Math.cos(angle) * speed);
 		}
 	}
 	

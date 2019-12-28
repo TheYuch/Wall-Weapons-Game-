@@ -38,12 +38,7 @@ public class Regular extends Enemy {
 	}
 	
 	public Regular(Point2D.Double playerpos, int corex, int corey) {
-		super(getspawnpos(), Color.RED);
-		super.health = 25;
-		super.speed = 2;
-		super.damagetowalls = 10;
-		super.damagetoplayer = 5;
-		super.ENEMY_SIZE = GameState.constantx - 5;
+		super(getspawnpos(), Color.RED, 25, 2, 10, 5, GameState.constantx - 5);
 		super.setvelocity(playerpos, corex, corey);
 	}
 

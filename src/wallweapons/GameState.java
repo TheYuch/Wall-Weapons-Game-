@@ -16,20 +16,23 @@ public class GameState extends KeyAdapter {
 	static final int GRID_THICKNESS = 2;
 	static final int WALL_HEALTH = 50;
 	
-	public static final int constantx = Main.WIN_WIDTH / GRIDS_X;
+	public static final int constantx = Main.WIN_WIDTH / GRIDS_X; //CONSTANTX MUST EQUAL CONSTANTY
 	public static final int constanty = Main.WIN_HEIGHT / GRIDS_Y;
 	
 	static final int CORE_X = Main.WIN_WIDTH / (2 * constantx);
 	static final int CORE_Y = Main.WIN_HEIGHT / (2 * constanty);
 	
-	public static int blockcnt = 0; //used for spawning better enemies
+	private static int blockcnt = 0; //used for spawning better enemies
 	
 	private int cooldown; //used for cool downs between doing damage to enemies (space)
+	private int vulnerability = 0; //used for taking damage from enemies. when ticks > vulnerability, enemies touching player do damage.
 	
 	public static int ticks = 0; // TICK - 30 TICKS/SECOND - used to track time
 	
 	/*
 	 * 
+	 * 
+	 * MAKE COLORS MORE ELEGANT, USING NEW COLOR(R, G, B) AND IMPORT IMAGES FOR BETTER GRAPHICS!!!
 	 * 
 	 * MAKE IT SO YOU HAVE TO KILL ENEMIES TO GAIN MATERIALS TO BUILD WALLS?!!?!??!?!?!!!?
 	 * 203984039849384
@@ -106,6 +109,7 @@ public class GameState extends KeyAdapter {
 		player.updateplayer(keyspressed, walls);
 		if (ticks >= cooldown)
 			Player.drawcolor = Color.BLUE;
+		boolean changevulnerability = false;
 		for (int i = 0; i < enemies.size(); i ++)
 		{
 			if (enemies.get(i).update(walls, player.pos, CORE_X, CORE_Y))
@@ -113,19 +117,29 @@ public class GameState extends KeyAdapter {
 				enemies.remove(i);
 				i--; 
 			}
-		}
-		for (int i = 0; i < weapons.size(); i ++) //update weapons
-		{
-			if (!(weapons.get(i) instanceof Shield))
+			//BELOW IS FOR PLAYER TAKING DAMAGE FROM ENEMIES.
+			else if (ticks > vulnerability && Math.abs(enemies.get(i).pos.x - player.pos.x) < constantx && Math.abs(enemies.get(i).pos.y - player.pos.y) < constanty)
 			{
-				weapons.get(i).update(ticks);
-				if (weapons.get(i) instanceof Laser) //do also for Multigun!!!
+				player.health -= enemies.get(i).damagetoplayer;
+				if (player.health <= 0)
 				{
-					Laser curlaser = (Laser)weapons.get(i);
-					curlaser.damageEnemies();
-					curlaser.damageWalls();
+					try {
+						Main.gameover();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					changevulnerability = true; //THIS WAY MULTIPLE ENEMIES CAN DEAL DAMAGE SIMULTANEOUSLY
 				}
 			}
+		}
+		if (changevulnerability)
+			vulnerability = ticks + 30;
+		for (int i = 0; i < weapons.size(); i ++) //update weapons
+		{
+			weapons.get(i).update(ticks);
 		}
 	}
 	
@@ -160,7 +174,14 @@ public class GameState extends KeyAdapter {
 	{
 		//only check space around placed wall (defined by parameters x and y)
 		//when checking, destroy all weapons within range, and enable if it matches.
-		//shields
+		
+		/*
+		 * BUG! WHEN YOU PLACE A BLOCK UNDER/RIGHT OF A WEAPON, IT DELETES IT AND SPAWNS THE WEAPON,
+		 * CAUSING IT TO UPDATE (I.E. CONTINUALLY PLACING BLOCK UNDER LASER CAUSES LASER TO ALWAYS BE
+		 * ON). EITHER ONLY DELETE WEAPONS TOUCHING BLOCK BEING CHANGED (WHICH IS HARD AND PROB NOT
+		 * GOING TO BE DONE) OR ******** KEEP A LIST OF NEXTTIMES OF EACH WEAPON... 239489343094830984
+		 */
+		
 		int ystart = Math.max(0, y - 3);
 		int yend = Math.min(GRIDS_Y, y + 1);
 		int xstart = Math.max(0, x - 3);
@@ -191,17 +212,32 @@ public class GameState extends KeyAdapter {
 						weapons.add(new Shield(j, i, rotation));
 					}
 					//Laser
-					if (matchShape(Main.rotateArray(Laser.getShape(), rotation), j, i))
+					if (rotation < 180 && matchShape(Main.rotateArray(Laser.getShape(), rotation), j, i))
 					{
 						weapons.add(new Laser(j, i, rotation));
 					}
 					//Multigun
-					
+					if (matchShape(Main.rotateArray(Multigun.getShape(), rotation), j, i))
+					{
+						weapons.add(new Multigun(j, i, rotation));
+					}
 				}
 				//NO NEED FOR ROTATION (THEY ARE SYMMETRICAL)
 				//Magnet
+				if (matchShape(Magnet.getShape(), j, i))
+				{
+					weapons.add(new Magnet(j, i));
+				}
 				//Radiator
+				if (matchShape(Radiator.getShape(), j, i))
+				{
+					weapons.add(new Radiator(j, i));
+				}
 				//Missile
+				if (matchShape(Missile.getShape(), j, i))
+				{
+					weapons.add(new Missile(j, i));
+				}
 			}
 		}
 	}

@@ -10,14 +10,14 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 	protected int speed;
 	public Point2D.Double pos;
 	protected Point2D.Double prevpos; //used to calculate collision
-	protected Point2D.Double velocity; //calculated using trigonometry depending on speed variable
+	public Point2D.Double velocity; //calculated using trigonometry depending on speed variable
 	public int damagetowalls;
 	public int damagetoplayer; //MAYBE GET RID OF THIS - SEE PLAYER LINE 40.. 21342341432
 	public int ENEMY_SIZE; //MUST BE SMALLER THAN THE SIZE OF A SINGLE WALL
 	
 	public Color drawcolor;
 	
-	protected Enemy(Point2D.Double pos, Color color)
+	protected Enemy(Point2D.Double pos, Color color, int health, int speed, int walldamage, int playerdamage, int size)
 	{
 		this.pos = new Point2D.Double();
 		this.prevpos = new Point2D.Double();
@@ -26,6 +26,11 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		this.prevpos.x = pos.x;
 		this.prevpos.y = pos.y;
 		this.drawcolor = color;
+		this.health = health;
+		this.speed = speed;
+		this.damagetoplayer = playerdamage;
+		this.damagetowalls = walldamage;
+		this.ENEMY_SIZE = size;
 	}
 	
 	protected boolean detectCollision(Rectangle r) //called in move abstract method
@@ -85,25 +90,14 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		}
 		//set velocity
 		//find angle of pos relative to target
-		double angle = Math.atan2((targetx - tmppos.x), (targety - tmppos.y));
-		if (Math.toDegrees(angle) == 90)
-		{
-			velocity.x = speed;
-			velocity.y = 0;
-		}
-		else if (Math.toDegrees(angle) == -90)
-		{
-			velocity.x = -speed;
-			velocity.y = 0;
-		}
-		velocity.x = Math.sin(angle) * speed;
-		velocity.y = Math.cos(angle) * speed;
+		Point2D.Double tmp = Main.getVelocity(speed, targetx, targety, tmppos.x, tmppos.y);
+		velocity.x = tmp.x;
+		velocity.y = tmp.y;
 	}
 	
 	abstract public boolean update(int[][] walls, Point2D.Double player, int corex, int corey); //called by GameState
 	//NOTE THAT THIS RETURNS WHETHER THE ENEMY HAS DIED OR NOT.
 	
-	//ADD TICKS LATER FOR SHOOTING ENEMY.019384098028390482034893184014
 	/*
 	 * Call in update method:
 	 * move()
