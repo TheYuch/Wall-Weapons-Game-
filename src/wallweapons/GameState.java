@@ -101,13 +101,13 @@ public class GameState extends KeyAdapter {
 			int enemy;
 			if (ticks >= 2700) //1 minute 30 secs (2700)
 				enemy = random.nextInt(6);
-			else if (ticks >= 0) //1 minute (1800)
-				enemy = random.nextInt(5);
-			else if (ticks >= 90) //45 seconds (1350)
+			else if (ticks >= 1800) //1 minute (1800)
+				enemy = random.nextInt(1);
+			else if (ticks >= 1350) //45 seconds (1350)
 				enemy = random.nextInt(4);
-			else if (ticks >= 60) //30 seconds (900)
+			else if (ticks >= 900) //30 seconds (900)
 				enemy = random.nextInt(3);
-			else if (ticks >= 30) //15 seconds (450)
+			else if (ticks >= 450) //15 seconds (450)
 				enemy = random.nextInt(2);
 			else
 				enemy = random.nextInt(1);
@@ -127,6 +127,9 @@ public class GameState extends KeyAdapter {
 				break;
 			case 4:
 				enemies.add(new Demolisher(Player.pos, CORE_X, CORE_Y));
+				break;
+			case 5:
+				enemies.add(new Bomber(Player.pos, CORE_X, CORE_Y));
 				break;
 			}
 		}

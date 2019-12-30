@@ -78,10 +78,10 @@ public class GamePanel extends JPanel {
 			if (curenemy instanceof Demolisher)
 			{
 				Demolisher cur = (Demolisher)curenemy;
-				g.setColor(cur.bulletcolor);
-				for (int j = 0; j < cur.bullets.size(); j ++)
+				g.setColor(Demolisher.bulletcolor);
+				for (Bullet bullet : cur.bullets)
 				{
-					g.drawRect(cur.bullets.get(i).pos.x, cur.bullets.get(i).pos.y, cur.bullets.get(i).size, cur.bullets.get(i).size);
+					g.drawRect(bullet.pos.x, bullet.pos.y, bullet.size, bullet.size);
 				}
 			}
 			
@@ -138,7 +138,7 @@ public class GamePanel extends JPanel {
 			{
 				Multigun cur = (Multigun)curweapon;
 				g.setColor(cur.drawcolor);
-				for (Bullet curbullet : cur.bullets)
+				for (Bullet curbullet : cur.bullets) //CODE NOTE: ALWAYS USE FOR EACH LOOP WHEN RENDERING BULLETS.
 				{
 					g.fillRect(curbullet.pos.x, curbullet.pos.y, curbullet.size, curbullet.size);
 				}

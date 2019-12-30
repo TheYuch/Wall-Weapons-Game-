@@ -19,7 +19,7 @@ public class Demolisher extends Enemy {
 	public static final Color bulletcolor = Color.DARK_GRAY;
 	
 	public Demolisher(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), Color.BLUE, 40, 2, 0, 0, GameState.constantx);
+		super(getRandomEdgeSpawn(), Color.BLUE, 40, 2, 0, 0, GameState.constantx - 5);
 		super.setvelocity(playerpos, corex, corey);
 		bullets = new ArrayList<Bullet>();
 	}
@@ -79,7 +79,7 @@ public class Demolisher extends Enemy {
 		
 		if (GameState.ticks > nexttime)
 		{
-			bullets.add(new Bullet((int)(pos.x + ENEMY_SIZE / 2), (int)(pos.y + ENEMY_SIZE / 2), new Point2D.Double(velocity.x, velocity.y), GameState.constantx / 4, 15));
+			bullets.add(new Bullet((int)(pos.x + ENEMY_SIZE / 2), (int)(pos.y + ENEMY_SIZE / 2), new Point2D.Double(velocity.x * 5, velocity.y * 5), GameState.constantx / 4, 15));
 			nexttime = GameState.ticks + delay;
 		}
 		for (int i = 0; i < bullets.size(); i ++)
