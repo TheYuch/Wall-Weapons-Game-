@@ -25,7 +25,7 @@ public class Bullet {
 	{
 		for (Enemy enemy : GameState.enemies)
 		{
-			if (pos.x + size >= enemy.pos.x && pos.x <= enemy.pos.x + enemy.ENEMY_SIZE && pos.y + size >= enemy.pos.y && pos.y < enemy.pos.y + enemy.ENEMY_SIZE)
+			if (enemy.enemyenabled && pos.x + size >= enemy.pos.x && pos.x <= enemy.pos.x + enemy.ENEMY_SIZE && pos.y + size >= enemy.pos.y && pos.y < enemy.pos.y + enemy.ENEMY_SIZE)
 			{
 				enemy.health -= damage;
 				return true;
@@ -41,6 +41,16 @@ public class Bullet {
 		if (GameState.walls[y][x] > 0)
 		{
 			GameState.damagewalls(y, x, damage);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean checkplayer(int playerdamage)
+	{
+		if (pos.x < Player.pos.x + Player.PLAYER_SIZE && pos.x + size > Player.pos.x && pos.y < Player.pos.y + Player.PLAYER_SIZE && pos.y + size > Player.pos.y)
+		{
+			Player.health -= playerdamage;
 			return true;
 		}
 		return false;

@@ -14,22 +14,14 @@ public class Player {
 	public static Color drawcolor = Color.BLUE;
 	public static Color lowhealthcolor = new Color(80, 170, 225);
 	
-	public int health = 100;
+	public static int health = 100;
 	
-	public Point2D.Double pos;
-	private Point2D.Double prevplayer;
-	public Point2D.Double velocity;
-	private double FRICTION = 0.8;
+	public static Point2D.Double pos = new Point2D.Double(Main.WIN_WIDTH / 2 - (PLAYER_SIZE / 2), Main.WIN_HEIGHT / 2 - ((PLAYER_SIZE * 2) + GameState.constantx - PLAYER_SIZE + 1));
+	private static Point2D.Double prevplayer = new Point2D.Double(Main.WIN_WIDTH / 2 - (PLAYER_SIZE / 2), Main.WIN_HEIGHT / 2 - (PLAYER_SIZE / 2));;
+	public static Point2D.Double velocity = new Point2D.Double(0, 0);
+	private static double FRICTION = 0.8;
 	
-	//public int tmp = 0; //try to get rid of this later
-	
-	public Player() {
-		pos = new Point2D.Double(Main.WIN_WIDTH / 2 - (PLAYER_SIZE / 2), Main.WIN_HEIGHT / 2 - ((PLAYER_SIZE * 2) + GameState.constantx - PLAYER_SIZE + 1));
-		prevplayer = new Point2D.Double(Main.WIN_WIDTH / 2 - (PLAYER_SIZE / 2), Main.WIN_HEIGHT / 2 - (PLAYER_SIZE / 2));
-		velocity = new Point2D.Double(0, 0);
-	}
-	
-	public void damageEnemies()
+	public static void damageEnemies()
 	{
 		for (int i = 0; i < GameState.enemies.size(); i ++)
 		{
@@ -37,14 +29,11 @@ public class Player {
 			if (Math.abs(enemypos.x - pos.x) <= GameState.constantx && Math.abs(enemypos.y - pos.y) <= GameState.constanty)
 			{
 				GameState.enemies.get(i).health -= DAMAGE_TO_ENEMIES;
-				//EITHER DO IT EVERY SECOND - ADDING VAR TO EACH ENEMY - TO DO DAMAGE TO PLAYER,
-				//OR ONLY FOR CERTAIN CLASSES (AND E.G. BULLETS/BOMBS THEY SHOOT) AFFECT THE ENEMY
-				//BUT ONLY ONCE IDK
 			}
 		}
 	}
 	
-	private void detectCollision(Rectangle r)
+	private static void detectCollision(Rectangle r)
 	{
 		if (pos.x < r.x + r.width && pos.x + PLAYER_SIZE > r.x && pos.y < r.y + r.height && pos.y + PLAYER_SIZE > r.y)
 		{
@@ -73,7 +62,7 @@ public class Player {
 		}
 	}
 	
-	public void updateplayer(HashSet<Integer> keyspressed, int[][] walls)
+	public static void updateplayer(HashSet<Integer> keyspressed, int[][] walls)
 	{
 		for (Integer code : keyspressed) //keys pressed
 		{

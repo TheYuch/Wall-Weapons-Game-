@@ -3,17 +3,19 @@ package wallweapons;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 public abstract class Enemy { //enemy will go to whichever is nearest - player or center
 	
 	public int health;
 	protected int speed;
 	public Point2D.Double pos;
-	protected Point2D.Double prevpos; //used to calculate collision
+	public Point2D.Double prevpos; //used to calculate collision
 	public Point2D.Double velocity; //calculated using trigonometry depending on speed variable
 	public int damagetowalls;
 	public int damagetoplayer; //MAYBE GET RID OF THIS - SEE PLAYER LINE 40.. 21342341432
 	public int ENEMY_SIZE; //MUST BE SMALLER THAN THE SIZE OF A SINGLE WALL
+	public boolean enemyenabled = true;
 	
 	public Color drawcolor;
 	
@@ -31,6 +33,48 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		this.damagetoplayer = playerdamage;
 		this.damagetowalls = walldamage;
 		this.ENEMY_SIZE = size;
+	}
+	
+	protected static Point2D.Double getpos(int size)
+	{
+		Random rand = new Random();
+		int localspawn = rand.nextInt(8);
+		switch (localspawn)
+		{
+		case 0: return new Point2D.Double(0, GameState.CORE_Y * GameState.constanty);
+		case 1: return new Point2D.Double(4 * GameState.constantx, -size);
+		case 2: return new Point2D.Double(GameState.CORE_X * GameState.constantx, -size);
+		case 3: return new Point2D.Double((GameState.GRIDS_X - 5) * GameState.constantx, -size);
+		case 4: return new Point2D.Double(Main.WIN_WIDTH - size, GameState.CORE_Y * GameState.constanty);
+		case 5: return new Point2D.Double((GameState.GRIDS_X - 5) * GameState.constantx, Main.WIN_HEIGHT);
+		case 6: return new Point2D.Double(GameState.CORE_X * GameState.constantx, Main.WIN_HEIGHT);
+		case 7: return new Point2D.Double(4 * GameState.constantx, Main.WIN_HEIGHT);
+		}
+		return new Point2D.Double();
+	}
+	
+	protected static Point2D.Double getRandomEdgeSpawn()
+	{
+		Random rand = new Random();
+		int size = GameState.constantx - 5;
+		double x;
+		double y;
+		if (rand.nextBoolean())
+		{
+			if (rand.nextBoolean())
+				x = -size;
+			else
+				x = Main.WIN_WIDTH;
+			return new Point2D.Double(x, ((rand.nextInt() & Integer.MAX_VALUE) % (Main.WIN_HEIGHT + size)) - size);
+		}
+		else
+		{
+			if (rand.nextBoolean())
+				y = -size;
+			else
+				y = Main.WIN_HEIGHT;
+			return new Point2D.Double(((rand.nextInt() & Integer.MAX_VALUE) % (Main.WIN_WIDTH + size)) - size, y);
+		}
 	}
 	
 	protected boolean detectCollision(Rectangle r) //called in move abstract method
@@ -67,7 +111,7 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		return false;
 	}
 	
-	abstract protected void move(int[][] walls, Point2D.Double player, int corex, int corey);//use walls to detect collision
+	abstract protected void move(Point2D.Double player, int corex, int corey);//use walls to detect collision
 	
 	protected void setvelocity(Point2D.Double player, int corex, int corey) //corepos relative to screen
 	{
@@ -95,7 +139,7 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		velocity.y = tmp.y;
 	}
 	
-	abstract public boolean update(int[][] walls, Point2D.Double player, int corex, int corey); //called by GameState
+	abstract public boolean update(Point2D.Double player, int corex, int corey); //called by GameState
 	//NOTE THAT THIS RETURNS WHETHER THE ENEMY HAS DIED OR NOT.
 	
 	/*

@@ -14,7 +14,7 @@ public class Missile extends Weapon {
 
 	private static final int missilespeed = 8;
 	private static final int missilesize = GameState.constantx / 4;
-	private static final int missiletime = 120; //4 second lifetime
+	private static final int missiletime = 60; //2 second lifetime
 	
 	public ArrayList<Bullet> missiles;
 	private ArrayList<Point2D.Double> targets;
@@ -30,7 +30,7 @@ public class Missile extends Weapon {
 	}
 	
 	public Missile(int x, int y) {
-		super(getShape(), Color.ORANGE, new Point(x, y), 60); //two second delay
+		super(getShape(), Color.ORANGE, new Point(x, y), 120); //four second delay
 		missiles = new ArrayList<Bullet>();
 		targets = new ArrayList<Point2D.Double>();
 		enemysizes = new ArrayList<Integer>();

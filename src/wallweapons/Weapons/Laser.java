@@ -87,12 +87,12 @@ public class Laser extends Weapon {
 			{
 				if (vertical)
 				{
-					if (Math.abs((pos.x * GameState.constantx) - GameState.enemies.get(i).pos.x) < GameState.constantx - (laserdif * 2))
+					if (GameState.enemies.get(i).enemyenabled && Math.abs((pos.x * GameState.constantx) - GameState.enemies.get(i).pos.x) < GameState.constantx - (laserdif * 2))
 						GameState.enemies.get(i).health -= damage;
 				}
 				else
 				{
-					if (Math.abs((pos.y * GameState.constanty) - GameState.enemies.get(i).pos.y) < GameState.constanty - (laserdif * 2))
+					if (GameState.enemies.get(i).enemyenabled && Math.abs((pos.y * GameState.constanty) - GameState.enemies.get(i).pos.y) < GameState.constanty - (laserdif * 2))
 						GameState.enemies.get(i).health -= damage;
 				}
 			}

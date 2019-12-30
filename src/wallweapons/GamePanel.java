@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
+import wallweapons.Enemies.Demolisher;
 import wallweapons.Weapons.*;
 
 public class GamePanel extends JPanel {
@@ -34,17 +35,17 @@ public class GamePanel extends JPanel {
 		
 		/*
 		 * Draw the grid
-		 */
-		/*
+		 
+		
 		g.setColor(Color.LIGHT_GRAY);
 		for (int i = 1; i < GameState.GRIDS_X; i++)
 		{
-			g.fillRect((i * constantx) - (GameState.GRID_THICKNESS / 2), 0, GameState.GRID_THICKNESS, Main.WIN_HEIGHT); 
+			g.fillRect((i * GameState.constantx) - (GameState.GRID_THICKNESS / 2), 0, GameState.GRID_THICKNESS, Main.WIN_HEIGHT); 
 			//rectangles act as thicker lines
 		}
 		for (int i = 1; i < GameState.GRIDS_Y; i ++)
 		{
-			g.fillRect(0, (i * constanty) - (GameState.GRID_THICKNESS / 2), Main.WIN_WIDTH, GameState.GRID_THICKNESS);
+			g.fillRect(0, (i * GameState.constanty) - (GameState.GRID_THICKNESS / 2), Main.WIN_WIDTH, GameState.GRID_THICKNESS);
 		}*/
 		
 		/*
@@ -74,6 +75,16 @@ public class GamePanel extends JPanel {
 		{
 			Enemy curenemy = GameState.enemies.get(i);
 			
+			if (curenemy instanceof Demolisher)
+			{
+				Demolisher cur = (Demolisher)curenemy;
+				g.setColor(cur.bulletcolor);
+				for (int j = 0; j < cur.bullets.size(); j ++)
+				{
+					g.drawRect(cur.bullets.get(i).pos.x, cur.bullets.get(i).pos.y, cur.bullets.get(i).size, cur.bullets.get(i).size);
+				}
+			}
+			
 			g.setColor(curenemy.drawcolor);
 			//LATER: MAKE IT SO ENEMIES WITH REALTIVELY LOWER HEALTH (HAVE BOOLEAN LOWERHEALTH)
 			//WILL BE DRAWN WITH BRIGHER COLORS (curenemy.drawcolor.brigher())
@@ -85,11 +96,11 @@ public class GamePanel extends JPanel {
 		/*
 		 * Draw the player
 		 */
-		if (Main.state.player.health <= 25)
+		if (Player.health <= 25)
 			g.setColor(Player.lowhealthcolor);
 		else
 			g.setColor(Player.drawcolor);
-		Point2D.Double player = Main.state.player.pos;
+		Point2D.Double player = Player.pos;
 		g.fillRect((int)player.x, (int)player.y, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
 		//g.fillOval((int)player.x, (int)player.y, GameState.PLAYER_SIZE, GameState.PLAYER_SIZE);
 		

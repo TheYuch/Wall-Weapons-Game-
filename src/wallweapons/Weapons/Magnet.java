@@ -8,6 +8,7 @@ import wallweapons.Enemy;
 import wallweapons.GameState;
 import wallweapons.Main;
 import wallweapons.Weapon;
+import wallweapons.Enemies.Jumper;
 
 public class Magnet extends Weapon {
 
@@ -32,7 +33,7 @@ public class Magnet extends Weapon {
 	public void update(int ticks) {
 		for (Enemy enemy : GameState.enemies)
 		{
-			//if (enemy.getClass() != asodiufoiaewjrlwekfj) //jumper/demolishers not affected by magnets
+			if (!(enemy instanceof Jumper)) //jumper/demolishers not affected by magnets
 			{
 				Point2D.Double curpos = new Point2D.Double(enemy.pos.x + (enemy.ENEMY_SIZE / 2), enemy.pos.y + (enemy.ENEMY_SIZE / 2));
 				//note that curpos is set to the center coordinates of the enemy
@@ -43,9 +44,8 @@ public class Magnet extends Weapon {
 					//Add to enemy's velocity depending on distance to magnet.
 					int speed = (int)(((radius + 1) * GameState.constantx) + (enemy.ENEMY_SIZE / 2) - distance);
 					Point2D.Double attractionvel = Main.getVelocity(speed, centerpos.x, centerpos.y, curpos.x, curpos.y);
-					enemy.pos.x += attractionvel.x / 15;
-					enemy.pos.y += attractionvel.y / 15;
-					//bug: enemy gets stuck on walls. Either check collision first, or keep it as a feature.
+					enemy.velocity.x += attractionvel.x / 15;
+					enemy.velocity.y += attractionvel.y / 15;
 				}
 			}
 		}

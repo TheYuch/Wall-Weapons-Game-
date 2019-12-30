@@ -37,13 +37,15 @@ public class Radiator extends Weapon {
 			alpha = 0;
 			for (Enemy enemy : GameState.enemies) //halve the healths of enemies in range
 			{
-				Point2D.Double curpos = new Point2D.Double(enemy.pos.x + (enemy.ENEMY_SIZE / 2), enemy.pos.y + (enemy.ENEMY_SIZE / 2));
-				//note that curpos is set to the center coordinates of the enemy
-				double distance = Math.sqrt(((curpos.x - centerpos.x) * (curpos.x - centerpos.x)) + ((curpos.y - centerpos.y) * (curpos.y - centerpos.y)));
-				if (distance < ((radius + 1.5) * GameState.constantx) + (enemy.ENEMY_SIZE / 2))
+				if (enemy.enemyenabled)
 				{
-					enemy.health = (int)Math.ceil(enemy.health / 2);
-					System.out.println(enemy.health);
+					Point2D.Double curpos = new Point2D.Double(enemy.pos.x + (enemy.ENEMY_SIZE / 2), enemy.pos.y + (enemy.ENEMY_SIZE / 2));
+					//note that curpos is set to the center coordinates of the enemy
+					double distance = Math.sqrt(((curpos.x - centerpos.x) * (curpos.x - centerpos.x)) + ((curpos.y - centerpos.y) * (curpos.y - centerpos.y)));
+					if (distance < ((radius + 1.5) * GameState.constantx) + (enemy.ENEMY_SIZE / 2))
+					{
+						enemy.health = (int)Math.ceil(enemy.health / 2);
+					}
 				}
 			}
 			circletodraw.x = pos.x * GameState.constantx;

@@ -18,7 +18,7 @@ public class Main {
 		GamePanel game = new GamePanel();
 		frame.add(game);
 
-		frame.setPreferredSize(new Dimension(WIN_WIDTH + 6, WIN_HEIGHT + 29));
+		frame.setPreferredSize(new Dimension(WIN_WIDTH + 6, WIN_HEIGHT + 28));
 		frame.pack();
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -3,22 +3,29 @@ package wallweapons.Enemies;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
+import java.util.ArrayList;
 
+import wallweapons.Bullet;
 import wallweapons.Enemy;
 import wallweapons.GameState;
 import wallweapons.Main;
 import wallweapons.Weapons.Shield;
 
-public class Hyper extends Enemy {
+public class Demolisher extends Enemy {
 
-	public Hyper(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), Color.ORANGE, 20, 4, 7, 3, GameState.constantx - 8);
+	public ArrayList<Bullet> bullets;
+	private int nexttime = GameState.ticks;
+	private static final int delay = 45; //1.5 seconds
+	public static final Color bulletcolor = Color.DARK_GRAY;
+	
+	public Demolisher(Point2D.Double playerpos, int corex, int corey) {
+		super(getRandomEdgeSpawn(), Color.BLUE, 40, 2, 0, 0, GameState.constantx);
 		super.setvelocity(playerpos, corex, corey);
+		bullets = new ArrayList<Bullet>();
 	}
 
 	@Override
-	protected void move(Double player, int corex, int corey) {
+	protected void move(Point2D.Double player, int corex, int corey) {
 		super.pos.x += super.velocity.x;
 		super.pos.y += super.velocity.y;
 		
@@ -56,13 +63,7 @@ public class Hyper extends Enemy {
 					Rectangle r = new Rectangle(j * GameState.constantx, i * GameState.constanty, GameState.constantx, GameState.constanty);
 					if (j != GameState.GRIDS_X - 1 && GameState.walls[i][j + 1] != 0)
 						r.width *= 2;
-					if (super.detectCollision(r));
-					{
-						if (GameState.ticks % 30 == 0) //make it not uniform?!??!?!12309830293
-						{
-							GameState.damagewalls(i, j, super.damagetowalls);
-						}
-					}
+					super.detectCollision(r);
 				}
 			}
 		}
@@ -72,9 +73,24 @@ public class Hyper extends Enemy {
 	}
 
 	@Override
-	public boolean update(Double player, int corex, int corey) {
+	public boolean update(Point2D.Double player, int corex, int corey) {
 		if (health <= 0)
 			return true;
+		
+		if (GameState.ticks > nexttime)
+		{
+			bullets.add(new Bullet((int)(pos.x + ENEMY_SIZE / 2), (int)(pos.y + ENEMY_SIZE / 2), new Point2D.Double(velocity.x, velocity.y), GameState.constantx / 4, 15));
+			nexttime = GameState.ticks + delay;
+		}
+		for (int i = 0; i < bullets.size(); i ++)
+		{
+			if (bullets.get(i).move() || bullets.get(i).checkwalls() || bullets.get(i).checkplayer(super.damagetoplayer))
+			{
+				bullets.remove(i);
+				i--;
+			}
+		}
+		
 		move(player, corex, corey);
 		super.setvelocity(player, corex, corey);
 		return false;

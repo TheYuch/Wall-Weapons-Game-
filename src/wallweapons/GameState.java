@@ -5,6 +5,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
 import wallweapons.Enemies.*;
 import wallweapons.Weapons.*;
@@ -17,10 +18,10 @@ public class GameState extends KeyAdapter {
 	static final int WALL_HEALTH = 50;
 	
 	public static final int constantx = Main.WIN_WIDTH / GRIDS_X; //CONSTANTX MUST EQUAL CONSTANTY
-	public static final int constanty = Main.WIN_HEIGHT / GRIDS_Y;
+	public static final int constanty = Main.WIN_HEIGHT / GRIDS_Y; //represents grid dimensions
 	
-	static final int CORE_X = Main.WIN_WIDTH / (2 * constantx);
-	static final int CORE_Y = Main.WIN_HEIGHT / (2 * constanty);
+	public static final int CORE_X = Main.WIN_WIDTH / (2 * constantx);
+	public static final int CORE_Y = Main.WIN_HEIGHT / (2 * constanty);
 	
 	private static int blockcnt = 0; //used for spawning better enemies
 	
@@ -40,8 +41,7 @@ public class GameState extends KeyAdapter {
 	 * 
 	 */
 	
-	//player
-	Player player;
+	//player is already static. Reference it by doing Player.soijdfoi
 	
 	//enemies and weapons
 	public static ArrayList<Enemy> enemies;
@@ -56,8 +56,6 @@ public class GameState extends KeyAdapter {
 		keyspressed = new HashSet<Integer>();
 		walls = new int[GRIDS_Y][GRIDS_X]; //Y = I, J = X!!!!!!!!!!!!!!!!!!!!
 		walls[CORE_Y][CORE_X] = -1;
-		
-		player = new Player();
 		
 		weapons = new ArrayList<Weapon>();
 		enemies = new ArrayList<Enemy>();
@@ -95,33 +93,68 @@ public class GameState extends KeyAdapter {
 		}
 	}
 	
-	private void spawnenemies() 
+	private void spawnenemies() //TICKS determines which enemies to spawn. BLOCKCNT determines speed of spawning.
 	{
-		if (ticks % 210 == 0) //every 3 seconds - change to go faster based on blockCnt 203948039844
+		if (ticks % (4000 / (blockcnt + 20)) == 0)
 		{
-			enemies.add(new Regular(player.pos, CORE_X, CORE_Y)); //RANDOM ENEMY GENERATION - BASED ON BLOCKCNT - change later 2398403984
+			Random random = new Random();
+			int enemy;
+			if (ticks >= 2700) //1 minute 30 secs (2700)
+				enemy = random.nextInt(6);
+			else if (ticks >= 0) //1 minute (1800)
+				enemy = random.nextInt(5);
+			else if (ticks >= 90) //45 seconds (1350)
+				enemy = random.nextInt(4);
+			else if (ticks >= 60) //30 seconds (900)
+				enemy = random.nextInt(3);
+			else if (ticks >= 30) //15 seconds (450)
+				enemy = random.nextInt(2);
+			else
+				enemy = random.nextInt(1);
+			switch (enemy)
+			{
+			case 0:
+				enemies.add(new Regular(Player.pos, CORE_X, CORE_Y));
+				break;
+			case 1:
+				enemies.add(new Hyper(Player.pos, CORE_X, CORE_Y));
+				break;
+			case 2:
+				enemies.add(new Scout(Player.pos, CORE_X, CORE_Y));
+				break;
+			case 3:
+				enemies.add(new Jumper());
+				break;
+			case 4:
+				enemies.add(new Demolisher(Player.pos, CORE_X, CORE_Y));
+				break;
+			}
 		}
 	}
 	
 	public void update() {
 		ticks++;
 		spawnenemies();
-		player.updateplayer(keyspressed, walls);
+		Player.updateplayer(keyspressed, walls);
 		if (ticks >= cooldown)
 			Player.drawcolor = Color.BLUE;
+		for (int i = 0; i < weapons.size(); i ++) //update weapons
+		{
+			weapons.get(i).update(ticks);
+		}
 		boolean changevulnerability = false;
 		for (int i = 0; i < enemies.size(); i ++)
 		{
-			if (enemies.get(i).update(walls, player.pos, CORE_X, CORE_Y))
+			if (enemies.get(i).update(Player.pos, CORE_X, CORE_Y))
 			{
 				enemies.remove(i);
 				i--; 
 			}
 			//BELOW IS FOR PLAYER TAKING DAMAGE FROM ENEMIES.
-			else if (ticks > vulnerability && Math.abs(enemies.get(i).pos.x - player.pos.x) < constantx && Math.abs(enemies.get(i).pos.y - player.pos.y) < constanty)
+			else if (ticks > vulnerability && Math.abs(enemies.get(i).pos.x - Player.pos.x) < constantx && Math.abs(enemies.get(i).pos.y - Player.pos.y) < constanty)
 			{
-				player.health -= enemies.get(i).damagetoplayer;
-				if (player.health <= 0)
+				Player.health -= enemies.get(i).damagetoplayer;
+				if (Player.health <= 0)
 				{
 					try {
 						Main.gameover();
@@ -137,10 +170,6 @@ public class GameState extends KeyAdapter {
 		}
 		if (changevulnerability)
 			vulnerability = ticks + 30;
-		for (int i = 0; i < weapons.size(); i ++) //update weapons
-		{
-			weapons.get(i).update(ticks);
-		}
 	}
 	
 	public static int getxonboard (double x) //gets x on board using actual x coordinate
@@ -247,26 +276,26 @@ public class GameState extends KeyAdapter {
 		int c = e.getKeyCode();
 		if (c == KeyEvent.VK_DOWN) //placing block mechanism
 		{
-			addremove(getxonboard(player.pos.x + (Player.PLAYER_SIZE / 2)), getyonboard(player.pos.y + Player.PLAYER_SIZE - 1) + 1);
+			addremove(getxonboard(Player.pos.x + (Player.PLAYER_SIZE / 2)), getyonboard(Player.pos.y + Player.PLAYER_SIZE - 1) + 1);
 		}
 		else if (c == KeyEvent.VK_UP)
 		{
-			addremove(getxonboard(player.pos.x + (Player.PLAYER_SIZE / 2)), getyonboard(player.pos.y) - 1);
+			addremove(getxonboard(Player.pos.x + (Player.PLAYER_SIZE / 2)), getyonboard(Player.pos.y) - 1);
 		}
 		else if (c == KeyEvent.VK_RIGHT)
 		{
-			addremove(getxonboard(player.pos.x + Player.PLAYER_SIZE - 1) + 1, getyonboard(player.pos.y + (Player.PLAYER_SIZE / 2)));
+			addremove(getxonboard(Player.pos.x + Player.PLAYER_SIZE - 1) + 1, getyonboard(Player.pos.y + (Player.PLAYER_SIZE / 2)));
 		}
 		else if (c == KeyEvent.VK_LEFT)
 		{
-			addremove(getxonboard(player.pos.x ) - 1, getyonboard(player.pos.y + (Player.PLAYER_SIZE / 2)));
+			addremove(getxonboard(Player.pos.x ) - 1, getyonboard(Player.pos.y + (Player.PLAYER_SIZE / 2)));
 		}
 		else if (c == KeyEvent.VK_SPACE)
 		{
 			if (ticks >= cooldown)
 			{
 				Player.drawcolor = Color.YELLOW;
-				player.damageEnemies();
+				Player.damageEnemies();
 				cooldown = ticks + 30;
 			}
 		}
