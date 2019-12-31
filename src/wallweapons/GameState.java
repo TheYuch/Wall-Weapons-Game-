@@ -30,6 +30,8 @@ public class GameState extends KeyAdapter {
 	
 	public static int ticks = 0; // TICK - 30 TICKS/SECOND - used to track time
 	
+	public static int score = 0;
+	
 	/*
 	 * 
 	 * 
@@ -102,7 +104,7 @@ public class GameState extends KeyAdapter {
 			if (ticks >= 2700) //1 minute 30 secs (2700)
 				enemy = random.nextInt(6);
 			else if (ticks >= 1800) //1 minute (1800)
-				enemy = random.nextInt(1);
+				enemy = random.nextInt(5);
 			else if (ticks >= 1350) //45 seconds (1350)
 				enemy = random.nextInt(4);
 			else if (ticks >= 900) //30 seconds (900)
@@ -150,6 +152,7 @@ public class GameState extends KeyAdapter {
 		{
 			if (enemies.get(i).update(Player.pos, CORE_X, CORE_Y))
 			{
+				score += enemies.get(i).scoreval;
 				enemies.remove(i);
 				i--; 
 			}
@@ -202,17 +205,12 @@ public class GameState extends KeyAdapter {
 		return true;
 	}
 	
-	private static void checkwalls(int x, int y) //checks all walls for any weapons, then intializes their classes
+	public static void checkwalls(int x, int y) //checks all walls for any weapons, then intializes their classes
 	{
 		//only check space around placed wall (defined by parameters x and y)
 		//when checking, destroy all weapons within range, and enable if it matches.
 		
-		/*
-		 * BUG! WHEN YOU PLACE A BLOCK UNDER/RIGHT OF A WEAPON, IT DELETES IT AND SPAWNS THE WEAPON,
-		 * CAUSING IT TO UPDATE (I.E. CONTINUALLY PLACING BLOCK UNDER LASER CAUSES LASER TO ALWAYS BE
-		 * ON). EITHER ONLY DELETE WEAPONS TOUCHING BLOCK BEING CHANGED (WHICH IS HARD AND PROB NOT
-		 * GOING TO BE DONE) OR ******** KEEP A LIST OF NEXTTIMES OF EACH WEAPON... 239489343094830984
-		 */
+		ArrayList<Weapon> tmpweapons = new ArrayList<Weapon>();
 		
 		int ystart = Math.max(0, y - 3);
 		int yend = Math.min(GRIDS_Y, y + 1);
@@ -224,6 +222,8 @@ public class GameState extends KeyAdapter {
 			int cury = weapons.get(i).pos.y;
 			if (cury >= ystart && cury < yend && curx >= xstart && curx < xend)
 			{
+				if (!(weapons.get(i) instanceof Shield) && !(weapons.get(i) instanceof Magnet))
+					tmpweapons.add(weapons.get(i));
 				weapons.remove(i);
 				i--;
 			}
@@ -234,10 +234,6 @@ public class GameState extends KeyAdapter {
 			{
 				for (int rotation = 0; rotation < 360; rotation += 90)
 				{
-					//MAKE IT ONLY CHECK FOR CERTAIN SHAPES BASED ON THEIR SIZES 023984093843094
-					//DOESN'T WORK - IF SHIELD IN TOP LEFT CORNER AND PLACE A BLOCK NOT TOUCHING
-					//THAT SHIELD, IT DESTROYS IT (IN LOOP ABOVE) AND DOES NOT FIND IT AGAIN. SO
-					//MAYBE DO THIS AND ALSO DESTROY WEAPONS BASED ON THEIR SIZES 10923840398409
 					//Shield
 					if (matchShape(Main.rotateArray(Shield.getShape(), rotation), j, i))
 					{
@@ -246,12 +242,32 @@ public class GameState extends KeyAdapter {
 					//Laser
 					if (rotation < 180 && matchShape(Main.rotateArray(Laser.getShape(), rotation), j, i))
 					{
-						weapons.add(new Laser(j, i, rotation));
+						boolean added = false;
+						for (Weapon weapon: tmpweapons)
+						{
+							if (weapon.pos.x == j && weapon.pos.y == i && weapon.degrees == rotation)
+							{
+								weapons.add(weapon);
+								added = true;
+							}
+						}
+						if (!added)
+							weapons.add(new Laser(j, i, rotation));
 					}
 					//Multigun
 					if (matchShape(Main.rotateArray(Multigun.getShape(), rotation), j, i))
 					{
-						weapons.add(new Multigun(j, i, rotation));
+						boolean added = false;
+						for (Weapon weapon: tmpweapons)
+						{
+							if (weapon.pos.x == j && weapon.pos.y == i && weapon.degrees == rotation)
+							{
+								weapons.add(weapon);
+								added = true;
+							}
+						}
+						if (!added)
+							weapons.add(new Multigun(j, i, rotation));
 					}
 				}
 				//NO NEED FOR ROTATION (THEY ARE SYMMETRICAL)
@@ -263,12 +279,32 @@ public class GameState extends KeyAdapter {
 				//Radiator
 				if (matchShape(Radiator.getShape(), j, i))
 				{
-					weapons.add(new Radiator(j, i));
+					boolean added = false;
+					for (Weapon weapon: tmpweapons)
+					{
+						if (weapon.pos.x == j && weapon.pos.y == i)
+						{
+							weapons.add(weapon);
+							added = true;
+						}
+					}
+					if (!added)
+						weapons.add(new Radiator(j, i));
 				}
 				//Missile
 				if (matchShape(Missile.getShape(), j, i))
 				{
-					weapons.add(new Missile(j, i));
+					boolean added = false;
+					for (Weapon weapon: tmpweapons)
+					{
+						if (weapon.pos.x == j && weapon.pos.y == i)
+						{
+							weapons.add(weapon);
+							added = true;
+						}
+					}
+					if (!added)
+						weapons.add(new Missile(j, i));
 				}
 			}
 		}

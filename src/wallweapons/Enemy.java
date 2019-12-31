@@ -19,7 +19,9 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 	
 	public Color drawcolor;
 	
-	protected Enemy(Point2D.Double pos, Color color, int health, int speed, int walldamage, int playerdamage, int size)
+	public int scoreval;
+	
+	protected Enemy(Point2D.Double pos, Color color, int health, int speed, int walldamage, int playerdamage, int size, int scoreval)
 	{
 		this.pos = new Point2D.Double();
 		this.prevpos = new Point2D.Double();
@@ -33,6 +35,7 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 		this.damagetoplayer = playerdamage;
 		this.damagetowalls = walldamage;
 		this.ENEMY_SIZE = size;
+		this.scoreval = scoreval;
 	}
 	
 	protected static Point2D.Double getpos(int size)
@@ -105,8 +108,6 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 				velocity.y = 0;
 				return true;
 			}
-			//return true; //UNCOMMENT THIS IF YOU WANT ENEMY TO DOUBLE SPEED INSIDE SHIELD BOUNDARY
-			//2O348093840938409384039284
 		}
 		return false;
 	}
@@ -141,25 +142,5 @@ public abstract class Enemy { //enemy will go to whichever is nearest - player o
 	
 	abstract public boolean update(Point2D.Double player, int corex, int corey); //called by GameState
 	//NOTE THAT THIS RETURNS WHETHER THE ENEMY HAS DIED OR NOT.
-	
-	/*
-	 * Call in update method:
-	 * move()
-	 *     call setvelocity method inside first
-	 *     jumper (green enemy) has different move
-	 *     green jumper and blue demolisher spawn only in 8 square corner directions.
-	 * for all obstacles (for scout, it passes through shields, so don't check shields)
-	 *     checkCollision()
-	 * perform special ability
-	 *     green jumper: if land on player/walls, do damage/die
-	 *     blue demomilsher: shoot bullet every 2 seconds
-	 *     purple bomber: if collision break walls in 1/2 radius, do damage to player if in range
-	 */
-	/*
-	 * Note:
-	 * For every weapon, go through each enemy and check their position for shooting
-	 * and magnets and radiators and missile shooters. Check class of enemies - if enemy
-	 * is a green jumper or blue demolisher, they are unaffected by magnets.
-	 */
 }
 	

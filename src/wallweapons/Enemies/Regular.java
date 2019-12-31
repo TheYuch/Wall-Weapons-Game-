@@ -3,6 +3,7 @@ package wallweapons.Enemies;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import wallweapons.Enemy;
 import wallweapons.GameState;
@@ -12,8 +13,11 @@ import wallweapons.Weapons.Shield;
 
 public class Regular extends Enemy {
 	
+	private int nexttime = GameState.ticks;
+	private static final int delay = 150;
+	
 	public Regular(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), Color.RED, 25, 2, 10, 5, GameState.constantx - 5);
+		super(getRandomEdgeSpawn(), Color.RED, 25, 2, 10, 5, GameState.constantx - 5, 1);
 		super.setvelocity(playerpos, corex, corey);
 	}
 
@@ -75,8 +79,28 @@ public class Regular extends Enemy {
 	public boolean update(Point2D.Double player, int corex, int corey) {
 		if (health <= 0)
 			return true;
+		else if (health <= 13) //half of original 25 health
+			super.drawcolor = new Color(245, 120, 65, 200);
 		move(player, corex, corey);
 		super.setvelocity(player, corex, corey);
+		
+		if (health > 12 && GameState.ticks >= nexttime)
+		{
+			Random rand = new Random();
+			for (int i = 0; i < rand.nextInt(3); i ++)
+			{
+				Regular toadd = new Regular(player, corex, corey);
+				toadd.pos.x = pos.x + rand.nextInt(200) - 100;
+				toadd.pos.y = pos.y + rand.nextInt(200) - 100;
+				toadd.health = 5;
+				toadd.speed = 1;
+				toadd.damagetowalls = 5;
+				toadd.damagetoplayer = 5;
+				GameState.enemies.add(toadd);
+			}
+			nexttime = GameState.ticks + delay;
+		}
+		
 		return false;
 	}
 

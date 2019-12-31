@@ -13,7 +13,7 @@ import wallweapons.Weapons.Shield;
 public class Hyper extends Enemy {
 
 	public Hyper(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), Color.ORANGE, 20, 4, 7, 3, GameState.constantx - 8);
+		super(getRandomEdgeSpawn(), Color.ORANGE, 20, 7, 7, 3, GameState.constantx - 8, 2);
 		super.setvelocity(playerpos, corex, corey);
 	}
 
@@ -74,7 +74,11 @@ public class Hyper extends Enemy {
 	@Override
 	public boolean update(Double player, int corex, int corey) {
 		if (health <= 0)
+		{
 			return true;
+		}
+		else if (health <= 10) //half of original 20 health
+			super.drawcolor = new Color(245, 185, 65, 200);
 		move(player, corex, corey);
 		super.setvelocity(player, corex, corey);
 		return false;

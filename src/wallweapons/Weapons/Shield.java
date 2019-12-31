@@ -45,7 +45,7 @@ public class Shield extends Weapon {
 	
 	public Shield(int x, int y, int degrees) //constructor
 	{
-		super(getShape(), Color.RED, new Point(x, y), 0);
+		super(getShape(), Color.RED, new Point(x, y), 0, degrees);
 		
 		collidingenemies = new ArrayList<Integer>();
 		

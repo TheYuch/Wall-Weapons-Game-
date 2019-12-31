@@ -15,11 +15,11 @@ public class Demolisher extends Enemy {
 
 	public ArrayList<Bullet> bullets;
 	private int nexttime = GameState.ticks;
-	private static final int delay = 45; //1.5 seconds
+	private static final int delay = 20; //2/3 seconds
 	public static final Color bulletcolor = Color.DARK_GRAY;
 	
 	public Demolisher(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), Color.BLUE, 40, 2, 0, 0, GameState.constantx - 5);
+		super(getRandomEdgeSpawn(), Color.BLUE, 40, 2, 0, 0, GameState.constantx - 5, 4);
 		super.setvelocity(playerpos, corex, corey);
 		bullets = new ArrayList<Bullet>();
 	}
@@ -76,6 +76,8 @@ public class Demolisher extends Enemy {
 	public boolean update(Point2D.Double player, int corex, int corey) {
 		if (health <= 0)
 			return true;
+		else if (health <= 20) //half of original 40 health
+			super.drawcolor = new Color(80, 65, 245, 200);
 		
 		if (GameState.ticks > nexttime)
 		{

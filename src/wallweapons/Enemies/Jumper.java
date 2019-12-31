@@ -11,7 +11,7 @@ import wallweapons.Main;
 public class Jumper extends Enemy {
 
 	private static final int size = GameState.constantx;
-	private static final int delay = 30; //1 second
+	private static final int delay = 20; //2/3 seconds
 	private static final int jumpttime = 15; //0.5 seconds
 	private int ontime = GameState.ticks;
 	private int nexttime = -1;
@@ -20,7 +20,7 @@ public class Jumper extends Enemy {
 	public boolean vulnerable = false;
 	
 	public Jumper() {
-		super(getpos(size), Color.GREEN, 30, -1, -1, 15, size);
+		super(getpos(size), Color.GREEN, 40, -1, -1, 15, size, 3);
 		//MAYBE MAKE BELOW MORE EFFICIENT?
 		int change = 2 * GameState.constantx;
 		if (super.pos.equals(new Point2D.Double(0, GameState.CORE_Y * GameState.constanty)))
@@ -73,6 +73,8 @@ public class Jumper extends Enemy {
 	public boolean update(Point2D.Double player, int corex, int corey) {
 		if (health <= 0)
 			return true;
+		else if (health <= 15) //half of original 30 health
+			super.drawcolor = new Color(65, 245, 185, 200);
 		if (vulnerable == true && pos.x >= 0 && pos.x < Main.WIN_WIDTH && pos.y >= 0 && pos.y < Main.WIN_HEIGHT)
 		{
 			if (GameState.walls[GameState.getyonboard(super.pos.y)][GameState.getxonboard(super.pos.x)] > 0) {

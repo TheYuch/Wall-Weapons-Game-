@@ -24,7 +24,7 @@ public class Radiator extends Weapon {
 	}
 	
 	public Radiator(int x, int y) {
-		super(getShape(), new Color(65, 245, 195), new Point(x, y), 60); //2 second delay
+		super(getShape(), new Color(65, 245, 195), new Point(x, y), 60, -1); //2 second delay
 		centerpos = new Point((int)((x + 1.5) * GameState.constantx), (int)((y + 1.5) * GameState.constanty));
 		circletodraw = new Rectangle(pos.x, pos.y, 3 * GameState.constantx, 3 * GameState.constanty);
 		cnstchange = radius * GameState.constantx / super.delay;

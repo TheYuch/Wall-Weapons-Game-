@@ -11,8 +11,6 @@ import wallweapons.Weapon;
 import wallweapons.Enemies.Jumper;
 
 public class Magnet extends Weapon {
-
-	//add a rule where you can't place magnets within another's magnetic field?!??120348230983
 	
 	public final static int radius = 3; //out from the shape (attraction radius)
 	public final static int alpha = 100; //will be drawn as a magnetic field radius thing
@@ -25,7 +23,7 @@ public class Magnet extends Weapon {
 	}
 	
 	public Magnet(int x, int y) {
-		super(getShape(), new Color(200, 85, 220), new Point(x, y), 0);
+		super(getShape(), new Color(200, 85, 220), new Point(x, y), 0, -1);
 		centerpos = new Point((pos.x + 1) * GameState.constantx, (pos.y + 1) * GameState.constanty);
 	}
 

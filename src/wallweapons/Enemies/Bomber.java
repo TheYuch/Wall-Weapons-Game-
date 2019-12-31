@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.Random;
 
 import wallweapons.Enemy;
 import wallweapons.GameState;
@@ -15,12 +16,13 @@ public class Bomber extends Enemy {
 	private boolean dead = false;
 	
 	public Bomber(Point2D.Double playerpos, int corex, int corey) {
-		super(getRandomEdgeSpawn(), new Color(75, 0, 130), 50, 5, 50, 10, GameState.constantx);
+		super(getRandomEdgeSpawn(), new Color(75, 0, 130), 75, 5, 50, 10, GameState.constantx, 5);
 		super.setvelocity(playerpos, corex, corey);
 	}
 
 	private void die(int radius)
 	{
+		Random rand = new Random();
 		int xonboard = GameState.getxonboard(pos.x);
 		int yonboard = GameState.getyonboard(pos.y);
 		for (int i = Math.max(0, yonboard - radius); i < Math.min(GameState.GRIDS_Y, yonboard + radius + 1); i ++)
@@ -30,6 +32,15 @@ public class Bomber extends Enemy {
 				if (GameState.walls[i][j] > 0)
 				{
 					GameState.damagewalls(i, j, GameState.walls[i][j]); //sets it to 0. (breaks wall)
+					if(rand.nextBoolean()) //break block or shift it to a new location
+					{
+						int targetx = j + rand.nextInt(3) - 1;
+						int targety = i + rand.nextInt(3) - 1;
+						if (targetx >= 0 && targetx < GameState.GRIDS_X && targety >= 0 && targety < GameState.GRIDS_Y && GameState.walls[targety][targetx] != -1)
+						{
+							GameState.walls[targety][targetx] = 50;
+						}
+					}
 				}
 			}
 		}
@@ -86,6 +97,8 @@ public class Bomber extends Enemy {
 	public boolean update(Double player, int corex, int corey) {
 		if (health <= 0 || dead)
 			return true;
+		else if (health <= 25) //half of original 50 health
+			super.drawcolor = new Color(230, 65, 245, 200);
 		move(player, corex, corey);
 		super.setvelocity(player, corex, corey);
 		return false;

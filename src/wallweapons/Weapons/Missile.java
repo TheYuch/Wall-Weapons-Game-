@@ -9,6 +9,7 @@ import wallweapons.Bullet;
 import wallweapons.GameState;
 import wallweapons.Main;
 import wallweapons.Weapon;
+import wallweapons.Enemies.Jumper;
 
 public class Missile extends Weapon {
 
@@ -30,7 +31,7 @@ public class Missile extends Weapon {
 	}
 	
 	public Missile(int x, int y) {
-		super(getShape(), Color.ORANGE, new Point(x, y), 120); //four second delay
+		super(getShape(), Color.ORANGE, new Point(x, y), 120, -1); //four second delay
 		missiles = new ArrayList<Bullet>();
 		targets = new ArrayList<Point2D.Double>();
 		enemysizes = new ArrayList<Integer>();
@@ -60,13 +61,15 @@ public class Missile extends Weapon {
 		{
 			//find closest enemy - DEPENDING ON THE CENTERS BETWEEN BULLET AND ENEMY (FOR ACCURACY)
 			//missile won't be created if no enemy is present
-			if (GameState.enemies.size() != 0)
+			if (GameState.enemies.size() != 0 && !(GameState.enemies.size() == 1 && GameState.enemies.get(0) instanceof Jumper))
 			{
 				double mindistance = getDistance(missilespawn.x + (missilesize / 2), missilespawn.y + (missilesize / 2), GameState.enemies.get(0).pos.x + (GameState.enemies.get(0).ENEMY_SIZE / 2), GameState.enemies.get(0).pos.y + (GameState.enemies.get(0).ENEMY_SIZE / 2));
 				Point2D.Double minpos = GameState.enemies.get(0).pos;
 				int minsize = GameState.enemies.get(0).ENEMY_SIZE;
 				for (int i = 1; i < GameState.enemies.size(); i ++)
 				{
+					if (GameState.enemies.get(i) instanceof Jumper)
+						continue;
 					double tmp = getDistance(missilespawn.x + (missilesize / 2), missilespawn.y + (missilesize / 2), GameState.enemies.get(i).pos.x + (GameState.enemies.get(i).ENEMY_SIZE / 2), GameState.enemies.get(i).pos.y + (GameState.enemies.get(i).ENEMY_SIZE / 2));
 					if (tmp < mindistance)
 					{
@@ -88,7 +91,7 @@ public class Missile extends Weapon {
 					spawnpos.y = pos.y * GameState.constanty - missilesize;
 				else
 					spawnpos.y = (pos.y + 3) * GameState.constanty;
-				missiles.add(new Bullet(spawnpos.x, spawnpos.y, tmpvel, missilesize, 20));
+				missiles.add(new Bullet(spawnpos.x, spawnpos.y, tmpvel, missilesize, 10));
 				//add lifetime
 				times.add(ticks + missiletime);
 			}

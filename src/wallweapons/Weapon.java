@@ -10,8 +10,9 @@ public abstract class Weapon {
 	public Point pos;
 	protected int delay;
 	protected int nexttime;
+	public int degrees;
 	
-	public Weapon(int[][] shape, Color drawcolor, Point pos, int delay) {
+	public Weapon(int[][] shape, Color drawcolor, Point pos, int delay, int degrees) {
 		this.shape = shape;
 		this.drawcolor = drawcolor;
 		this.pos = new Point();
@@ -19,6 +20,7 @@ public abstract class Weapon {
 		this.pos.y = pos.y;
 		this.delay = delay;
 		this.nexttime = delay;
+		this.degrees = degrees;
 		//is delay and ticks are both 0, then that means that it is constantly updating.
 	}
 	

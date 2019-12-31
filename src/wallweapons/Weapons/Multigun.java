@@ -30,7 +30,7 @@ public class Multigun extends Weapon {
 	}
 	
 	public Multigun(int x, int y, int degrees) {
-		super(getShape(), Color.DARK_GRAY, new Point(x, y), 30);
+		super(getShape(), Color.DARK_GRAY, new Point(x, y), 30, degrees);
 		//CURRENT SHAPE = 0 DEGREE ROTATION (shoots in top RIGHT corner)
 		bullets = new ArrayList<Bullet>();
 		

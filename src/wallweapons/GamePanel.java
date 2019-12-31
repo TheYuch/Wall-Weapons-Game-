@@ -1,6 +1,7 @@
 package wallweapons;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -20,12 +21,6 @@ public class GamePanel extends JPanel {
 
 		//Graphics2D g2 = (Graphics2D) g;
 		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		/*
-		 * 
-		 * MAKE IT SO THAT YOU PUT A TRANSPARENT COLOR OVER EVERY WEAPON? NEW COLOR(R, G, B, ALPHA)
-		 * 2341234234
-		 */
 		
 		/*
 		 * Clear the screen
@@ -70,6 +65,16 @@ public class GamePanel extends JPanel {
 			}
 		}
 		
+		/*
+		 * Draw the player
+		 */
+		if (Player.health <= 25)
+			g.setColor(Player.lowhealthcolor);
+		else
+			g.setColor(Player.drawcolor);
+		Point2D.Double player = Player.pos;
+		g.fillRect((int)player.x, (int)player.y, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+		
 		//draw enemies
 		for (int i = 0; i < GameState.enemies.size(); i ++)
 		{
@@ -92,17 +97,6 @@ public class GamePanel extends JPanel {
 			//using g2 for smooth ovals (and uncomment first 2 lines of paintComponent)
 			g.fillOval((int)(curenemy.pos.x), (int)(curenemy.pos.y), curenemy.ENEMY_SIZE, curenemy.ENEMY_SIZE);
 		}
-		
-		/*
-		 * Draw the player
-		 */
-		if (Player.health <= 25)
-			g.setColor(Player.lowhealthcolor);
-		else
-			g.setColor(Player.drawcolor);
-		Point2D.Double player = Player.pos;
-		g.fillRect((int)player.x, (int)player.y, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-		//g.fillOval((int)player.x, (int)player.y, GameState.PLAYER_SIZE, GameState.PLAYER_SIZE);
 		
 		//draw weapons
 		for (int i = 0; i < GameState.weapons.size(); i ++)
@@ -159,5 +153,7 @@ public class GamePanel extends JPanel {
 				}
 			}
 		}
+		g.setFont(new Font("Lato", Font.PLAIN, 50));
+		g.drawString("Score: " + GameState.score, 15, 50);
 	}
 }

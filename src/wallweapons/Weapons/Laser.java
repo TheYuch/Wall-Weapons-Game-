@@ -27,7 +27,7 @@ public class Laser extends Weapon {
 	}
 	
 	public Laser(int x, int y, int degrees) {
-		super(getShape(), Color.CYAN, new Point(x, y), 45);
+		super(getShape(), Color.CYAN, new Point(x, y), 45, degrees);
 		if (degrees == 90 || degrees == 270)
 		{
 			vertical = true;
