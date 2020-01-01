@@ -35,10 +35,13 @@ public class GameState extends KeyAdapter {
 	/*
 	 * 
 	 * 
-	 * MAKE COLORS MORE ELEGANT, USING NEW COLOR(R, G, B) AND IMPORT IMAGES FOR BETTER GRAPHICS!!!
+	 * IMPORT IMAGES FOR BETTER GRAPHICS!!!
 	 * 
 	 * MAKE IT SO YOU HAVE TO KILL ENEMIES TO GAIN MATERIALS TO BUILD WALLS?!!?!??!?!?!!!?
 	 * 203984039849384
+	 * 
+	 * 
+	 * BUG: YOU CAN GET INTO BLOCKS IF YOU MOVE TO IT ON EXACTLY ITS CORNER.
 	 * 
 	 * 
 	 */
@@ -139,7 +142,7 @@ public class GameState extends KeyAdapter {
 	
 	public void update() {
 		ticks++;
-		spawnenemies();
+		//spawnenemies();
 		Player.updateplayer(keyspressed, walls);
 		if (ticks >= cooldown)
 			Player.drawcolor = Color.BLUE;
@@ -190,7 +193,7 @@ public class GameState extends KeyAdapter {
 	
 	private static boolean matchShape(int[][] shape, int x, int y)
 	{
-		if (y + shape.length >= walls.length || x + shape[0].length >= walls[0].length) //if not fit
+		if (y + shape.length > walls.length || x + shape[0].length > walls[0].length) //if not fit
 			return false;
 		for (int i = 0; i < shape.length; i ++)
 		{
@@ -215,7 +218,7 @@ public class GameState extends KeyAdapter {
 		int ystart = Math.max(0, y - 3);
 		int yend = Math.min(GRIDS_Y, y + 1);
 		int xstart = Math.max(0, x - 3);
-		int xend = Math.min(GRIDS_X - 1, x + 1);
+		int xend = Math.min(GRIDS_X, x + 1);
 		for (int i = 0; i < weapons.size(); i ++)
 		{
 			int curx = weapons.get(i).pos.x;

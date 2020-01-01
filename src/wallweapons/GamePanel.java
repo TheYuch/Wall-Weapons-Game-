@@ -153,7 +153,7 @@ public class GamePanel extends JPanel {
 				}
 			}
 		}
-		g.setFont(new Font("Lato", Font.PLAIN, 50));
+		g.setFont(new Font("Calibri", Font.PLAIN, 50));
 		g.drawString("Score: " + GameState.score, 15, 50);
 	}
 }

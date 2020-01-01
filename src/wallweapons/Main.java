@@ -100,7 +100,7 @@ public class Main {
 	
 	public static void gameover() throws InterruptedException
 	{
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 		System.exit(0);
 	}
 }
