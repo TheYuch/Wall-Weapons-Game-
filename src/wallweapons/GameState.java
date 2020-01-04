@@ -142,7 +142,7 @@ public class GameState extends KeyAdapter {
 	
 	public void update() {
 		ticks++;
-		//spawnenemies();
+		spawnenemies();
 		Player.updateplayer(keyspressed, walls);
 		if (ticks >= cooldown)
 			Player.drawcolor = Color.BLUE;
